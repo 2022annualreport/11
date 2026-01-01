@@ -5,101 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dicta - أدوات تحليل النصوص</title>
     <style>
+        /* منع التفاعل مع الصفحة بالكامل */
+        html {
+            pointer-events: none; /* هذا السطر يمنع الضغط على أي رابط أو زر نهائياً */
+            user-select: none;    /* يمنع نسخ النصوص */
+        }
+        
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        header {
             background-color: #ffffff;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #202124;
+        }
+        
+        header {
+            border-bottom: 1px solid #ebebeb;
+            padding: 15px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .logo {
-            font-size: 1.5rem;
+
+        .logo-text {
+            font-size: 24px;
             font-weight: bold;
-            color: #007bff;
+            color: #1a73e8;
+            letter-spacing: -1px;
         }
-        nav a {
-            margin-right: 1.5rem;
-            text-decoration: none;
-            color: #555;
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            color: #5f6368;
+            font-size: 14px;
         }
-        .hero {
+
+        .hero-section {
             text-align: center;
-            padding: 4rem 2rem;
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            padding: 100px 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #202124;
+        }
+
+        .description {
+            font-size: 18px;
+            color: #5f6368;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .main-button {
+            background-color: #1a73e8;
             color: white;
+            padding: 12px 30px;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 500;
+            text-decoration: none;
         }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .tools-grid {
+
+        .features-grid {
+            max-width: 1000px;
+            margin: 50px auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            padding: 20px;
         }
-        .tool-card {
-            background: white;
-            padding: 1.5rem;
+
+        .feature-card {
+            padding: 30px;
+            border: 1px solid #ebebeb;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: center;
+            transition: none;
         }
-        .tool-card h3 {
-            color: #007bff;
+
+        .feature-card h3 {
+            color: #1a73e8;
+            margin-top: 0;
         }
+
         footer {
+            margin-top: 100px;
+            padding: 40px;
+            border-top: 1px solid #ebebeb;
             text-align: center;
-            padding: 2rem;
-            background: #eee;
-            margin-top: 4rem;
+            font-size: 13px;
+            color: #70757a;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">Dicta</div>
-    <nav>
-        <a href="/">الرئيسية</a>
-        <a href="/about">عن المنصة</a>
-        <a href="/contact">اتصل بنا</a>
-    </nav>
+    <div class="logo-text">Dicta</div>
+    <div class="nav-links">
+        <span>المنتجات</span>
+        <span>الأبحاث</span>
+        <span>عن المختبر</span>
+        <span>الدعم</span>
+    </div>
 </header>
 
-<section class="hero">
-    <h1>مختبر الأدلة الحاسوبية للنصوص</h1>
-    <p>تطوير أدوات ذكية لتحليل وفهم النصوص العبرية والعربية بدقة عالية.</p>
+<section class="hero-section">
+    <h1>مستقبل تحليل النصوص</h1>
+    <p class="description">نقدم حلولاً ذكية لمعالجة اللغات الطبيعية باستخدام أحدث تقنيات الذكاء الاصطناعي، مخصصة للنصوص التاريخية والحديثة.</p>
+    <div class="main-button">ابدأ الآن</div>
 </section>
 
-<div class="container">
-    <div class="tools-grid">
-        <div class="tool-card">
-            <h3>المحلل الصرفي</h3>
-            <p>أدوات متقدمة لتشكيل النصوص وتحليل جذور الكلمات.</p>
-        </div>
-        <div class="tool-card">
-            <h3>الباحث الذكي</h3>
-            <p>محرك بحث يعتمد على السياق والمعنى وليس فقط الكلمات المفتاحية.</p>
-        </div>
-        <div class="tool-card">
-            <h3>التصنيف الآلي</h3>
-            <p>تصنيف النصوص والمستندات حسب النوع والموضوع تلقائياً.</p>
-        </div>
+<div class="features-grid">
+    <div class="feature-card">
+        <h3>التشكيل الآلي</h3>
+        <p>نظام دقيق لتشكيل النصوص استناداً إلى السياق اللغوي الشامل.</p>
+    </div>
+    <div class="feature-card">
+        <h3>تحليل المخطوطات</h3>
+        <p>أدوات متخصصة للباحثين في النصوص القديمة والمخطوطات النادرة.</p>
+    </div>
+    <div class="feature-card">
+        <h3>التصنيف الذكي</h3>
+        <p>تنظيم البيانات النصية الضخمة وتصنيفها آلياً بدقة متناهية.</p>
     </div>
 </div>
 
 <footer>
-    <p>&copy; 2026 Dicta. جميع الحقوق محفوظة.</p>
+    <div>&copy; 2026 Dicta Laboratory. جميع الحقوق محفوظة.</div>
 </footer>
 
 </body>
