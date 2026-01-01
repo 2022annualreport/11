@@ -4,13 +4,9 @@ import re
 BASE_DIR = "tuaa/video"
 INDEX_FILE = os.path.join(BASE_DIR, "index.html")
 
+# تم إصلاح الخطأ هنا بترتيب علامات التنصيص والفاصلة
 STOP_WORDS = {
-    "مع","في","على","من","إلى","الى"سكس", "سكس مترجم", "video", "xxx video", "xvideo", "sex", "sex masri", 
-    "مصري", "عربي", "نيك", "فيدوهات", "مشاهدة", "ساخن", "نار", "امهات", 
-    "اخوات", "محارم", "مترجم", "xlxx", "ixxx", "xnxx", "xxarxx", "2026", 
-    "videos", "صور سكس", "صور", "افلام", "اباحية", "اباحي", "جامد", 
-    "سكس مصري", "شراميط", "نيك خلفي", "نيك طيز", "ass", "anal", "porn", 
-    "سكس أجنبي مترجم", "فضائح", "نودز", "سكس العرب", "كس العرب", "زباوي","عن",
+    "مع","في","على","من","إلى","الى","عن",
     "ال","و","او","أو","html"
 }
 
@@ -23,7 +19,7 @@ def extract_words(filename):
     )
 
 if not os.path.exists(BASE_DIR):
-    raise Exception("❌ المجلد tuaa/video غير موجود")
+    os.makedirs(BASE_DIR)
 
 files = [
     f for f in os.listdir(BASE_DIR)
@@ -32,9 +28,6 @@ files = [
 
 file_words = {f: extract_words(f) for f in files}
 
-# ======================
-# إنشاء index.html (Hub)
-# ======================
 with open(INDEX_FILE, "w", encoding="utf-8") as idx:
     idx.write("""<!doctype html>
 <html lang="ar" dir="rtl">
@@ -63,54 +56,52 @@ li{margin-bottom:8px}
 </html>
 """)
 
-# ======================
-# ربط ذكي داخل كل ملف
-# ======================
 for f in files:
     path = os.path.join(BASE_DIR, f)
 
-    with open(path, "r", encoding="utf-8", errors="ignore") as file:
-        content = file.read()
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as file:
+            content = file.read()
 
-    # إذا كان الربط موجود مسبقًا → لا نعيده
-    if "مواضيع مشابهة" in content:
-        continue
-
-    similarities = []
-    for other in files:
-        if other == f:
+        if "مواضيع مشابهة" in content or "سكس مشابه" in content:
             continue
-        common = file_words[f] & file_words[other]
-        if len(common) >= 1:
-            similarities.append((other, len(common)))
 
-    similarities.sort(key=lambda x: x[1], reverse=True)
-    related = [x[0] for x in similarities[:3]]
+        similarities = []
+        for other in files:
+            if other == f:
+                continue
+            common = file_words[f] & file_words[other]
+            if len(common) >= 1:
+                similarities.append((other, len(common)))
 
-    if not related:
-        continue
+        similarities.sort(key=lambda x: x[1], reverse=True)
+        related = [x[0] for x in similarities[:3]]
 
-    box = """
+        if not related:
+            continue
+
+        box = """
 <hr>
 <div class="related">
 <h3>سكس مشابه</h3>
 <ul>
 """
-    for r in related:
-        title = r.replace("-", " ").replace(".html", "")
-        box += f'<li><a href="{r}">{title}</a></li>\n'
+        for r in related:
+            title = r.replace("-", " ").replace(".html", "")
+            box += f'<li><a href="{r}">{title}</a></li>\n'
 
-    box += """
+        box += """
 </ul>
 </div>
 """
+        if "</body>" in content:
+            content = content.replace("</body>", box + "\n</body>")
+        else:
+            content += box
 
-    if "</body>" in content:
-        content = content.replace("</body>", box + "\n</body>")
-    else:
-        content += box
-
-    with open(path, "w", encoding="utf-8") as file:
-        file.write(content)
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(content)
+    except Exception as e:
+        print(f"Error processing {f}: {e}")
 
 print(f"✔ تم إنشاء index.html وربط {len(files)} ملف بنجاح")
