@@ -1,36 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Dicta applies cutting edge machine learning and natural language processing tools to the analysis of Hebrew texts. דיקטה מספקת כלים המשתמשים באלגוריתמים המתקדמים ביותר של למידת מכונה ועיבוד שפה טבעית למטרת ניתוח טקסטים עבריים.">
-    
-    <link rel="icon" href="/favicon.ico">
-
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Arimo:400,700" rel="stylesheet">
-
-    <title>DICTA</title>
-
-    <link href="/css/chunk-vendors.8b02b5fd.css" rel="stylesheet">
-    <link href="/css/app.df2ec794.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicta - أدوات تحليل النصوص</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        nav a {
+            margin-right: 1.5rem;
+            text-decoration: none;
+            color: #555;
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .tool-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .tool-card h3 {
+            color: #007bff;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #eee;
+            margin-top: 4rem;
+        }
+    </style>
 </head>
-<body class="he">
-    <noscript>
-        <strong>We're sorry but this site doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
+<body>
 
-    <div id="app">
-        <ul>
-            <li><a href="https://fontawesome.com/">Font Awesome</a></li>
-            <li><a href="https://fonts.google.com/">Google Fonts</a></li>
-        </ul>
+<header>
+    <div class="logo">Dicta</div>
+    <nav>
+        <a href="/">الرئيسية</a>
+        <a href="/about">عن المنصة</a>
+        <a href="/contact">اتصل بنا</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>مختبر الأدلة الحاسوبية للنصوص</h1>
+    <p>تطوير أدوات ذكية لتحليل وفهم النصوص العبرية والعربية بدقة عالية.</p>
+</section>
+
+<div class="container">
+    <div class="tools-grid">
+        <div class="tool-card">
+            <h3>المحلل الصرفي</h3>
+            <p>أدوات متقدمة لتشكيل النصوص وتحليل جذور الكلمات.</p>
+        </div>
+        <div class="tool-card">
+            <h3>الباحث الذكي</h3>
+            <p>محرك بحث يعتمد على السياق والمعنى وليس فقط الكلمات المفتاحية.</p>
+        </div>
+        <div class="tool-card">
+            <h3>التصنيف الآلي</h3>
+            <p>تصنيف النصوص والمستندات حسب النوع والموضوع تلقائياً.</p>
+        </div>
     </div>
+</div>
 
-    <script src="/js/chunk-vendors.8d36bc61.js"></script>
-    <script src="/js/app.082a9a63.js"></script>
+<footer>
+    <p>&copy; 2026 Dicta. جميع الحقوق محفوظة.</p>
+</footer>
+
 </body>
 </html>
