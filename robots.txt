@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pasuk-old.dicta.org.il/sitemap.xml
