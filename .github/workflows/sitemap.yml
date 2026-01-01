@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # يتيح لك تشغيل الأكشن يدوياً للتجربة
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,29 +16,25 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # مهم جداً لجلب كل تاريخ التعديلات ومنع التعارض
+          fetch-depth: 0
 
       - name: Update sitemap.xml
         run: |
           SITEMAP="sitemap.xml"
-          BASE_URL="pasuk-old.dicta.org.il"
+          # تم تصحيح الـ BASE_URL بإضافة https:// والتأكد من عدم وجود سلاش زائدة
+          BASE_URL="https://pasuk-old.dicta.org.il"
           
-          # إنشاء مجلد إذا لم يكن موجوداً
           mkdir -p tuaa/video
-
           TMP_SITEMAP=$(mktemp)
 
           echo '<?xml version="1.0" encoding="UTF-8"?>' > "$TMP_SITEMAP"
           echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$TMP_SITEMAP"
 
-          # جلب الروابط الحالية لتجنب التكرار
-          touch "$SITEMAP" # إنشاء ملف فارغ إذا لم يوجد
-
-          # استخراج الملفات وإضافتها
+          # البحث عن ملفات html وبناء الروابط بشكل صحيح
           find tuaa/video -type f -name "*.html" | while read file; do
+            # تصحيح: إضافة سلاش واحدة فقط بين الدومين والمسار
             URL="${BASE_URL}/${file}"
             
-            # الحصول على تاريخ آخر تعديل للملف من Git أو تاريخ اليوم كاحتياط
             LASTMOD=$(git log -1 --format="%cI" -- "$file" || date -I)
             
             echo "  <url>" >> "$TMP_SITEMAP"
@@ -58,34 +54,11 @@ jobs:
           git config user.email "github-actions@github.com"
           git add sitemap.xml
           
-          # التحقق من وجود تغييرات حقيقية قبل المتابعة
           if git diff --quiet && git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
 
-          git commit -m "Update tuaa/video sitemap.xml [skip ci]"
-
-          # محاولة الرفع مع إعادة المحاولة في حال فشل التعارض (Retry Loop)
-          MAX_RETRIES=5
-          RETRY_COUNT=0
-          
-          until [ $RETRY_COUNT -ge $MAX_RETRIES ]
-          do
-            echo "Attempting to push (Attempt $((RETRY_COUNT+1)))..."
-            # جلب التغييرات البعيدة ودمجها مع التغييرات المحلية
-            git pull --rebase origin main
-            if git push origin main; then
-              echo "Push successful!"
-              break
-            else
-              echo "Push failed, retrying in 5 seconds..."
-              RETRY_COUNT=$((RETRY_COUNT+1))
-              sleep 5
-            fi
-          done
-
-          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
-            echo "Failed to push after $MAX_RETRIES attempts."
-            exit 1
-          fi
+          git commit -m "Update sitemap.xml with correct URLs [skip ci]"
+          git pull --rebase origin main
+          git push origin main
