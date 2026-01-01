@@ -1,142 +1,166 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dicta - أدوات تحليل النصوص</title>
+    <title>Dicta - Natural Language Processing Tools</title>
     <style>
-        /* منع التفاعل مع الصفحة بالكامل */
+        /* Disable all interactions */
         html {
-            pointer-events: none; /* هذا السطر يمنع الضغط على أي رابط أو زر نهائياً */
-            user-select: none;    /* يمنع نسخ النصوص */
+            pointer-events: none;
+            user-select: none;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #ffffff;
-            color: #202124;
+            color: #1f2937;
+            line-height: 1.5;
         }
         
         header {
-            border-bottom: 1px solid #ebebeb;
-            padding: 15px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 1.25rem 4rem;
+            border-bottom: 1px solid #f3f4f6;
         }
 
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1a73e8;
-            letter-spacing: -1px;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            letter-spacing: -0.025em;
         }
 
-        .nav-links {
+        .nav-right {
             display: flex;
-            gap: 25px;
-            color: #5f6368;
-            font-size: 14px;
+            align-items: center;
+            gap: 2rem;
         }
 
-        .hero-section {
+        .lang-switcher {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .lang-active {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .hero {
+            padding: 8rem 2rem;
             text-align: center;
-            padding: 100px 20px;
-            background-color: #f8f9fa;
+            background: radial-gradient(circle at top, #f0f7ff 0%, #ffffff 100%);
         }
 
         h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #202124;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.05em;
         }
 
-        .description {
-            font-size: 18px;
-            color: #5f6368;
-            max-width: 700px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
+        .hero p {
+            font-size: 1.25rem;
+            color: #4b5563;
+            max-width: 42rem;
+            margin: 0 auto 2.5rem;
         }
 
-        .main-button {
-            background-color: #1a73e8;
+        .btn-primary {
+            background-color: #2563eb;
             color: white;
-            padding: 12px 30px;
-            border-radius: 4px;
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
             display: inline-block;
-            font-weight: 500;
-            text-decoration: none;
         }
 
-        .features-grid {
-            max-width: 1000px;
-            margin: 50px auto;
+        .grid {
+            max-width: 80rem;
+            margin: 4rem auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            padding: 20px;
+            gap: 2rem;
+            padding: 0 2rem;
         }
 
-        .feature-card {
-            padding: 30px;
-            border: 1px solid #ebebeb;
-            border-radius: 8px;
-            transition: none;
+        .card {
+            padding: 2.5rem;
+            border: 1px solid #f3f4f6;
+            border-radius: 1rem;
+            background: #ffffff;
         }
 
-        .feature-card h3 {
-            color: #1a73e8;
-            margin-top: 0;
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .card p {
+            color: #6b7280;
+            font-size: 0.95rem;
         }
 
         footer {
-            margin-top: 100px;
-            padding: 40px;
-            border-top: 1px solid #ebebeb;
+            border-top: 1px solid #f3f4f6;
+            padding: 4rem 2rem;
             text-align: center;
-            font-size: 13px;
-            color: #70757a;
+            color: #9ca3af;
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-text">Dicta</div>
-    <div class="nav-links">
-        <span>المنتجات</span>
-        <span>الأبحاث</span>
-        <span>عن المختبر</span>
-        <span>الدعم</span>
+    <div class="logo">Dicta</div>
+    <div class="nav-right">
+        <div class="lang-switcher">
+            <span class="lang-active">EN</span>
+            <span>|</span>
+            <span>עברית</span>
+        </div>
+        <div style="color: #4b5563; font-size: 0.875rem; font-weight: 500; display: flex; gap: 1.5rem;">
+            <span>Tools</span>
+            <span>Research</span>
+            <span>About</span>
+        </div>
     </div>
 </header>
 
-<section class="hero-section">
-    <h1>مستقبل تحليل النصوص</h1>
-    <p class="description">نقدم حلولاً ذكية لمعالجة اللغات الطبيعية باستخدام أحدث تقنيات الذكاء الاصطناعي، مخصصة للنصوص التاريخية والحديثة.</p>
-    <div class="main-button">ابدأ الآن</div>
+<section class="hero">
+    <h1>Advanced NLP Infrastructure</h1>
+    <p>State-of-the-art natural language processing tools for historical and modern texts, powered by deep learning and linguistic expertise.</p>
+    <div class="btn-primary">Explore Our Tools</div>
 </section>
 
-<div class="features-grid">
-    <div class="feature-card">
-        <h3>التشكيل الآلي</h3>
-        <p>نظام دقيق لتشكيل النصوص استناداً إلى السياق اللغوي الشامل.</p>
+<div class="grid">
+    <div class="card">
+        <h3>Morphological Analysis</h3>
+        <p>Precise lemmatization and tagging for complex semitic languages, enabling deep textual insights.</p>
     </div>
-    <div class="feature-card">
-        <h3>تحليل المخطوطات</h3>
-        <p>أدوات متخصصة للباحثين في النصوص القديمة والمخطوطات النادرة.</p>
+    <div class="card">
+        <h3>Smart Search</h3>
+        <p>Semantic-aware search engines that understand context beyond simple keywords.</p>
     </div>
-    <div class="feature-card">
-        <h3>التصنيف الذكي</h3>
-        <p>تنظيم البيانات النصية الضخمة وتصنيفها آلياً بدقة متناهية.</p>
+    <div class="card">
+        <h3>Text Classification</h3>
+        <p>Automated categorization and metadata extraction for large-scale document collections.</p>
     </div>
 </div>
 
 <footer>
-    <div>&copy; 2026 Dicta Laboratory. جميع الحقوق محفوظة.</div>
+    <p>&copy; 2026 Dicta - The Center for Analysis of Texts. All rights reserved.</p>
 </footer>
 
 </body>
