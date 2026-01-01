@@ -21,63 +21,29 @@ jobs:
       - name: Update sitemap.xml and generate index.html
         run: |
           SITEMAP="sitemap.xml"
-          INDEX_FILE="index.html"
+          INDEX_TEMPLATE="index.html"
           BASE_URL="https://pasuk-old.dicta.org.il"
           
-          mkdir -p tuaa/video
-          
-          # --- إعداد السايت ماب ---
-          TMP_SITEMAP=$(mktemp)
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > "$TMP_SITEMAP"
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$TMP_SITEMAP"
-
-          # --- إعداد ملف الفهرس الذكي (HTML) ---
-          cat <<EOF > "$INDEX_FILE"
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-              <meta charset="UTF-8">
-              <title>Content Index - Archive</title>
-              <style>
-                  body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-                  h1 { color: #1a73e8; text-align: center; }
-                  .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; background: white; padding: 20px; border-radius: 8px; }
-                  a { font-size: 12px; color: #333; text-decoration: none; border: 1px solid #eee; padding: 5px; border-radius: 3px; display: block; overflow: hidden; }
-                  a:hover { background: #e8f0fe; border-color: #1a73e8; }
-              </style>
-          </head>
-          <body>
-              <h1>Archive Hub</h1>
-              <div class="container">
-          EOF
-
-          # البحث عن الملفات وبناء الروابط للسايت ماب والفهرس
+          # استخراج روابط الملفات
+          LINKS_HTML=""
           find tuaa/video -type f -name "*.html" | while read file; do
-            URL="${BASE_URL}/${file}"
-            LASTMOD=$(git log -1 --format="%cI" -- "$file" || date -I)
-            
-            # إضافة للسايت ماب
-            echo "  <url>" >> "$TMP_SITEMAP"
-            echo "    <loc>${URL}</loc>" >> "$TMP_SITEMAP"
-            echo "    <lastmod>${LASTMOD}</lastmod>" >> "$TMP_SITEMAP"
-            echo "    <changefreq>daily</changefreq>" >> "$TMP_SITEMAP"
-            echo "    <priority>0.8</priority>" >> "$TMP_SITEMAP"
-            echo "  </url>" >> "$TMP_SITEMAP"
-            
-            # إضافة لملف الفهرس (HTML)
-            echo "    <a href=\"/${file}\">${file##*/}</a>" >> "$INDEX_FILE"
+            LINKS_HTML+="<a href='/${file}'>${file##*/}</a>"
           done
 
-          # إغلاق الملفات
+          # إنشاء السايت ماب
+          TMP_SITEMAP=$(mktemp)
+          echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' > "$TMP_SITEMAP"
+          find tuaa/video -type f -name "*.html" | while read file; do
+            echo "<url><loc>${BASE_URL}/${file}</loc><lastmod>$(date -I)</lastmod><priority>0.8</priority></url>" >> "$TMP_SITEMAP"
+          done
           echo '</urlset>' >> "$TMP_SITEMAP"
           mv "$TMP_SITEMAP" "$SITEMAP"
-          
-          echo '    </div></body></html>' >> "$INDEX_FILE"
 
       - name: Commit and Push changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          # إضافة الملفين معاً
           git add sitemap.xml index.html
           
           if git diff --quiet && git diff --staged --quiet; then
@@ -85,6 +51,6 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Update Sitemap and Index with 5000+ links [skip ci]"
+          git commit -m "Update Sitemap and Index with Interactive UI [skip ci]"
           git pull --rebase origin main
           git push origin main
