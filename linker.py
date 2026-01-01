@@ -1,63 +1,116 @@
 import os
-import random
+import re
 
 BASE_DIR = "tuaa/video"
 INDEX_FILE = os.path.join(BASE_DIR, "index.html")
 
-# اجلب كل ملفات html (بدون index.html)
+STOP_WORDS = {
+    "مع","في","على","من","إلى","الى"سكس", "سكس مترجم", "video", "xxx video", "xvideo", "sex", "sex masri", 
+    "مصري", "عربي", "نيك", "فيدوهات", "مشاهدة", "ساخن", "نار", "امهات", 
+    "اخوات", "محارم", "مترجم", "xlxx", "ixxx", "xnxx", "xxarxx", "2026", 
+    "videos", "صور سكس", "صور", "افلام", "اباحية", "اباحي", "جامد", 
+    "سكس مصري", "شراميط", "نيك خلفي", "نيك طيز", "ass", "anal", "porn", 
+    "سكس أجنبي مترجم", "فضائح", "نودز", "سكس العرب", "كس العرب", "زباوي","عن",
+    "ال","و","او","أو","html"
+}
+
+def extract_words(filename):
+    name = filename.replace(".html", "")
+    parts = re.split(r"[-_ ]+", name)
+    return set(
+        p for p in parts
+        if p not in STOP_WORDS and len(p) > 2
+    )
+
+if not os.path.exists(BASE_DIR):
+    raise Exception("❌ المجلد tuaa/video غير موجود")
+
 files = [
     f for f in os.listdir(BASE_DIR)
     if f.endswith(".html") and f != "index.html"
 ]
 
-# ===== 1) إنشاء index.html =====
-with open(INDEX_FILE, "w", encoding="utf-8") as index:
-    index.write("""<!doctype html>
+file_words = {f: extract_words(f) for f in files}
+
+# ======================
+# إنشاء index.html (Hub)
+# ======================
+with open(INDEX_FILE, "w", encoding="utf-8") as idx:
+    idx.write("""<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<title>نيك مقاطع سكس مصري افلام سكس زباوي سكس كس العرب سكس العرب سكس شراميط سكس عرب xnxx</title>
+<title>جميع الفيديوهات</title>
 <meta name="robots" content="index,follow">
+<style>
+body{font-family:sans-serif;background:#000;color:#ccc;padding:20px}
+a{color:#f90;text-decoration:none}
+li{margin-bottom:8px}
+</style>
 </head>
 <body>
-<h1>سكس مصري افلام سكس عربي xnxx porn مشاهدة سكس فيديو سكس</h1>
+<h1>فيدوهات سكس</h1>
 <ul>
 """)
 
     for f in files:
-        index.write(f'<li><a href="{f}">{f.replace("-", " ").replace(".html","")}</a></li>\n')
+        title = f.replace("-", " ").replace(".html", "")
+        idx.write(f'<li><a href="{f}">{title}</a></li>\n')
 
-    index.write("""
+    idx.write("""
 </ul>
 </body>
 </html>
 """)
 
-# ===== 2) إضافة ربط داخلي لكل ملف =====
+# ======================
+# ربط ذكي داخل كل ملف
+# ======================
 for f in files:
     path = os.path.join(BASE_DIR, f)
 
     with open(path, "r", encoding="utf-8", errors="ignore") as file:
         content = file.read()
 
-    # تجاهل إذا الربط موجود مسبقًا
+    # إذا كان الربط موجود مسبقًا → لا نعيده
     if "مواضيع مشابهة" in content:
         continue
 
-    related = random.sample([x for x in files if x != f], min(3, len(files)-1))
+    similarities = []
+    for other in files:
+        if other == f:
+            continue
+        common = file_words[f] & file_words[other]
+        if len(common) >= 1:
+            similarities.append((other, len(common)))
 
-    links_html = "<hr><h3>سكس مصري سكس عراقي سكس مترجم افلام سكس مترجم سكس نيك كس سكس طيز سكس محارم</h3><ul>"
+    similarities.sort(key=lambda x: x[1], reverse=True)
+    related = [x[0] for x in similarities[:3]]
+
+    if not related:
+        continue
+
+    box = """
+<hr>
+<div class="related">
+<h3>سكس مشابه</h3>
+<ul>
+"""
     for r in related:
-        links_html += f'<li><a href="{r}">{r.replace("-", " ").replace(".html","")}</a></li>'
-    links_html += "</ul>"
+        title = r.replace("-", " ").replace(".html", "")
+        box += f'<li><a href="{r}">{title}</a></li>\n'
 
-    # أضف قبل </body>
+    box += """
+</ul>
+</div>
+"""
+
     if "</body>" in content:
-        content = content.replace("</body>", links_html + "\n</body>")
+        content = content.replace("</body>", box + "\n</body>")
     else:
-        content += links_html
+        content += box
 
     with open(path, "w", encoding="utf-8") as file:
         file.write(content)
 
-print("✔ تم إنشاء index.html وربط جميع المنشورات")
+print(f"✔ تم إنشاء index.html وربط {len(files)} ملف بنجاح")
