@@ -1,4 +1,4 @@
-name: Update Sitemap tuaa/video
+name: Update Sitemap
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Update sitemap.xml
         run: |
-          SITEMAP="tuaa/video/sitemap.xml"
+          SITEMAP="sitemap.xml"
           BASE_URL="https://pasuk-old.dicta.org.il"
 
           TMP_SITEMAP=$(mktemp)
@@ -33,7 +33,7 @@ jobs:
           fi
 
           # إضافة الصفحات الجديدة فقط
-          find tuaa/video -type f -name "*.html" | while read file; do
+          find -type f -name "*.html" | while read file; do
             URL="${BASE_URL}/${file}"
 
             if ! grep -q "<loc>${URL}</loc>" "$SITEMAP"; then
