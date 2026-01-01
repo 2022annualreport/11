@@ -1,12 +1,10 @@
-name: Update Targeted Sitemap
+name: Update Sitemap tuaa/video
 
 on:
   push:
     branches:
       - main
-  # إضافة خيار التحديث المجدول (كل ساعة) لتقليل الضغط وتجميع التحديثات
-  schedule:
-    - cron: '0 * * * *' 
+  workflow_dispatch: # يتيح لك تشغيل الأكشن يدوياً للتجربة
 
 permissions:
   contents: write
@@ -18,40 +16,76 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # مهم للحصول على تاريخ آخر تعديل للملفات
+          fetch-depth: 0 # مهم جداً لجلب كل تاريخ التعديلات ومنع التعارض
 
-      - name: Generate Targeted Sitemap
+      - name: Update sitemap.xml
         run: |
           SITEMAP="sitemap.xml"
-          BASE_URL="https://pasuk-old.dicta.org.il/tuaa/video"
+          BASE_URL="pasuk-old.dicta.org.il"
           
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > "$SITEMAP"
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$SITEMAP"
+          # إنشاء مجلد إذا لم يكن موجوداً
+          mkdir -p tuaa/video
 
-          # البحث فقط داخل مجلد tuaa/video عن ملفات html
-          # استخدام 'basename' للحصول على اسم الملف فقط لدمجه مع الـ BASE_URL
+          TMP_SITEMAP=$(mktemp)
+
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > "$TMP_SITEMAP"
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$TMP_SITEMAP"
+
+          # جلب الروابط الحالية لتجنب التكرار
+          touch "$SITEMAP" # إنشاء ملف فارغ إذا لم يوجد
+
+          # استخراج الملفات وإضافتها
           find tuaa/video -type f -name "*.html" | while read file; do
-            FILE_NAME=$(basename "$file")
-            URL="${BASE_URL}/${FILE_NAME}"
+            URL="${BASE_URL}/${file}"
             
-            # الحصول على تاريخ آخر تعديل للملف من جيت بتنسيق ISO
+            # الحصول على تاريخ آخر تعديل للملف من Git أو تاريخ اليوم كاحتياط
             LASTMOD=$(git log -1 --format="%cI" -- "$file" || date -I)
             
-            echo "  <url>" >> "$SITEMAP"
-            echo "    <loc>${URL}</loc>" >> "$SITEMAP"
-            echo "    <lastmod>${LASTMOD}</lastmod>" >> "$SITEMAP"
-            echo "    <priority>0.9</priority>" >> "$SITEMAP"
-            echo "  </url>" >> "$SITEMAP"
+            echo "  <url>" >> "$TMP_SITEMAP"
+            echo "    <loc>${URL}</loc>" >> "$TMP_SITEMAP"
+            echo "    <lastmod>${LASTMOD}</lastmod>" >> "$TMP_SITEMAP"
+            echo "    <changefreq>daily</changefreq>" >> "$TMP_SITEMAP"
+            echo "    <priority>0.8</priority>" >> "$TMP_SITEMAP"
+            echo "  </url>" >> "$TMP_SITEMAP"
           done
 
-          echo '</urlset>' >> "$SITEMAP"
+          echo '</urlset>' >> "$TMP_SITEMAP"
+          mv "$TMP_SITEMAP" "$SITEMAP"
 
-      - name: Commit and Push
+      - name: Commit and Push changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add sitemap.xml
-          # تأخير بسيط قبل الرفع (sleep) لمنع تضارب العمليات المتزامنة
-          sleep 30 
-          git commit -m "Automated Sitemap Update for tuaa/video" || echo "No changes"
-          git push
+          
+          # التحقق من وجود تغييرات حقيقية قبل المتابعة
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Update tuaa/video sitemap.xml [skip ci]"
+
+          # محاولة الرفع مع إعادة المحاولة في حال فشل التعارض (Retry Loop)
+          MAX_RETRIES=5
+          RETRY_COUNT=0
+          
+          until [ $RETRY_COUNT -ge $MAX_RETRIES ]
+          do
+            echo "Attempting to push (Attempt $((RETRY_COUNT+1)))..."
+            # جلب التغييرات البعيدة ودمجها مع التغييرات المحلية
+            git pull --rebase origin main
+            if git push origin main; then
+              echo "Push successful!"
+              break
+            else
+              echo "Push failed, retrying in 5 seconds..."
+              RETRY_COUNT=$((RETRY_COUNT+1))
+              sleep 5
+            fi
+          done
+
+          if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+            echo "Failed to push after $MAX_RETRIES attempts."
+            exit 1
+          fi
