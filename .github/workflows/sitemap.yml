@@ -1,4 +1,4 @@
-name: Update Sitemap and Smart Index
+name: Update Sitemap
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  update-sitemap-and-index:
+  update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -18,24 +18,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Update sitemap.xml and generate index.html
+      - name: Update sitemap.xml
         run: |
           SITEMAP="sitemap.xml"
-          INDEX_TEMPLATE="index.html"
           BASE_URL="https://pasuk-old.dicta.org.il"
           
-          # استخراج روابط الملفات
-          LINKS_HTML=""
-          find tuaa/video -type f -name "*.html" | while read file; do
-            LINKS_HTML+="<a href='/${file}'>${file##*/}</a>"
-          done
-
-          # إنشاء السايت ماب
           TMP_SITEMAP=$(mktemp)
           echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' > "$TMP_SITEMAP"
+          
+          # استخراج الروابط للسايت ماب فقط (أفضل وسيلة أمان لجوجل)
           find tuaa/video -type f -name "*.html" | while read file; do
-            echo "<url><loc>${BASE_URL}/${file}</loc><lastmod>$(date -I)</lastmod><priority>0.8</priority></url>" >> "$TMP_SITEMAP"
+            echo "<url><loc>${BASE_URL}/${file}</loc><lastmod>$(date -I)</lastmod><priority>0.6</priority></url>" >> "$TMP_SITEMAP"
           done
+          
           echo '</urlset>' >> "$TMP_SITEMAP"
           mv "$TMP_SITEMAP" "$SITEMAP"
 
@@ -43,14 +38,13 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          # إضافة الملفين معاً
-          git add sitemap.xml index.html
+          git add sitemap.xml
           
           if git diff --quiet && git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
 
-          git commit -m "Update Sitemap and Index with Interactive UI [skip ci]"
+          git commit -m "Update secure sitemap [skip ci]"
           git pull --rebase origin main
           git push origin main
