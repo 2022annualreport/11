@@ -1,0 +1,32 @@
+name: Auto Google Indexing
+
+on:
+  push:
+    branches:
+      - main  # يعمل السكربت عند كل عملية رفع (Push) للفرع الرئيسي
+  workflow_dispatch: # يسمح بتشغيل السكربت يدوياً أيضاً
+
+jobs:
+  indexing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests oauth2client
+
+      - name: Run Indexing Script
+        env:
+          # يتم استدعاء بيانات الاعتماد من GitHub Secrets للأمان
+          GOOGLE_CREDS: ${{ secrets.GOOGLE_INDEXING_CREDENTIALS }}
+        run: |
+          # تحويل السر (Secret) إلى ملف مادي ليقرأه السكربت
+          echo "$GOOGLE_CREDS" > service_account.json
+          python indexing_script.py
