@@ -1,9 +1,12 @@
-name: Update Sitemap
+name: Update Targeted Sitemap
 
 on:
   push:
     branches:
       - main
+  # إضافة خيار التحديث المجدول (كل ساعة) لتقليل الضغط وتجميع التحديثات
+  schedule:
+    - cron: '0 * * * *' 
 
 permissions:
   contents: write
@@ -15,43 +18,40 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # مهم للحصول على تاريخ آخر تعديل للملفات
 
-      - name: Update sitemap.xml
+      - name: Generate Targeted Sitemap
         run: |
           SITEMAP="sitemap.xml"
-          BASE_URL="https://pasuk-old.dicta.org.il"
+          BASE_URL="https://pasuk-old.dicta.org.il/tuaa/video"
+          
+          echo '<?xml version="1.0" encoding="UTF-8"?>' > "$SITEMAP"
+          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$SITEMAP"
 
-          TMP_SITEMAP=$(mktemp)
-
-          echo '<?xml version="1.0" encoding="UTF-8"?>' > "$TMP_SITEMAP"
-          echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' >> "$TMP_SITEMAP"
-
-          # نسخ الروابط القديمة كما هي
-          if [ -f "$SITEMAP" ]; then
-            sed -n '/<url>/,/<\/url>/p' "$SITEMAP" >> "$TMP_SITEMAP"
-          fi
-
-          # إضافة الصفحات الجديدة فقط
-          find -type f -name "*.html" | while read file; do
-            URL="${BASE_URL}/${file}"
-
-            if ! grep -q "<loc>${URL}</loc>" "$SITEMAP"; then
-              LASTMOD=$(git log -1 --format="%cI" -- "$file")
-              echo "  <url>" >> "$TMP_SITEMAP"
-              echo "    <loc>${URL}</loc>" >> "$TMP_SITEMAP"
-              echo "    <lastmod>${LASTMOD}</lastmod>" >> "$TMP_SITEMAP"
-              echo "  </url>" >> "$TMP_SITEMAP"
-            fi
+          # البحث فقط داخل مجلد tuaa/video عن ملفات html
+          # استخدام 'basename' للحصول على اسم الملف فقط لدمجه مع الـ BASE_URL
+          find tuaa/video -type f -name "*.html" | while read file; do
+            FILE_NAME=$(basename "$file")
+            URL="${BASE_URL}/${FILE_NAME}"
+            
+            # الحصول على تاريخ آخر تعديل للملف من جيت بتنسيق ISO
+            LASTMOD=$(git log -1 --format="%cI" -- "$file" || date -I)
+            
+            echo "  <url>" >> "$SITEMAP"
+            echo "    <loc>${URL}</loc>" >> "$SITEMAP"
+            echo "    <lastmod>${LASTMOD}</lastmod>" >> "$SITEMAP"
+            echo "    <priority>0.9</priority>" >> "$SITEMAP"
+            echo "  </url>" >> "$SITEMAP"
           done
 
-          echo '</urlset>' >> "$TMP_SITEMAP"
-          mv "$TMP_SITEMAP" "$SITEMAP"
+          echo '</urlset>' >> "$SITEMAP"
 
-      - name: Commit updated sitemap.xml
+      - name: Commit and Push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add tuaa/video/sitemap.xml
-          git commit -m "Update tuaa/video sitemap.xml" || echo "No changes"
+          git add sitemap.xml
+          # تأخير بسيط قبل الرفع (sleep) لمنع تضارب العمليات المتزامنة
+          sleep 30 
+          git commit -m "Automated Sitemap Update for tuaa/video" || echo "No changes"
           git push
