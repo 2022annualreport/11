@@ -1,9 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicta - NLP Research Laboratory</title>
 
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Dicta applies cutting edge machine
-    learning and natural language processing tools to the analysis of Hebrew texts.
-    דיקטה מספקת כלים המשתמשים באלגוריתמים המתקדמים
-    ביותר של למידת מכונה ועיבוד שפה טבעית למטרת ניתוח טקסטים עבריים.
-    "><link rel="icon" href="/favicon.ico"><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous"><link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet"><link href="https://fonts.googleapis.com/css?family=Arimo:400,700" rel="stylesheet"><script async src="https://www.googletagmanager.com/gtag/js?id=G-XXKB7T9VTR"></script><script>window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXKB7T9VTR');</script><title>DICTA</title><link href="/css/app.df2ec794.css" rel="preload" as="style"><link href="/css/chunk-vendors.8b02b5fd.css" rel="preload" as="style"><link href="/js/app.082a9a63.js" rel="preload" as="script"><link href="/js/chunk-vendors.8d36bc61.js" rel="preload" as="script"><link href="/css/chunk-vendors.8b02b5fd.css" rel="stylesheet"><link href="/css/app.df2ec794.css" rel="stylesheet"></head><body class="he"><noscript><strong>We're sorry but dicta-home-2.0 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div><script src="/js/chunk-vendors.8d36bc61.js"></script><script src="/js/app.082a9a63.js"></script></body></html>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q7JMPFR4JC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Q7JMPFR4JC');
+    </script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; line-height: 1.6; color: #333; transition: all 0.3s; }
+        header { display: flex; justify-content: space-between; padding: 20px 50px; border-bottom: 1px solid #eee; }
+        .logo { font-size: 24px; font-weight: bold; color: #1a73e8; }
+        .lang-toggle { cursor: pointer; color: #1a73e8; font-weight: 600; border: 1px solid #1a73e8; padding: 5px 15px; border-radius: 5px; }
+        .hero { text-align: center; padding: 80px 20px; background: #f8f9fa; }
+        h1 { font-size: 42px; color: #202124; }
+        .content { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .card { border: 1px solid #eee; padding: 20px; border-radius: 8px; }
+        footer { text-align: center; padding: 40px; font-size: 13px; color: #777; border-top: 1px solid #eee; }
+        [lang="he"] { direction: rtl; }
+    </style>
+</head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicta - NLP Research Laboratory</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; line-height: 1.6; color: #333; transition: all 0.3s; }
+        header { display: flex; justify-content: space-between; padding: 20px 50px; border-bottom: 1px solid #eee; }
+        .logo { font-size: 24px; font-weight: bold; color: #1a73e8; }
+        .lang-toggle { cursor: pointer; color: #1a73e8; font-weight: 600; border: 1px solid #1a73e8; padding: 5px 15px; border-radius: 5px; }
+        .hero { text-align: center; padding: 80px 20px; background: #f8f9fa; }
+        h1 { font-size: 42px; color: #202124; }
+        .content { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .card { border: 1px solid #eee; padding: 20px; border-radius: 8px; }
+        footer { text-align: center; padding: 40px; font-size: 13px; color: #777; border-top: 1px solid #eee; }
+        [lang="he"] { direction: rtl; }
+    </style>
+</head>
+<body dir="ltr">
+
+<header>
+    <div class="logo">Dicta</div>
+    <div class="lang-toggle" onclick="toggleLang()">עברית</div>
+</header>
+
+<section class="hero">
+    <h1 id="title">Advanced NLP Infrastructure</h1>
+    <p id="desc">Developing cutting-edge tools for Hebrew and Semitic language processing.</p>
+</section>
+
+<div class="content">
+    <div class="card"><h3 id="t1">Morphology</h3><p id="p1">Lemmatization and tagging tools.</p></div>
+    <div class="card"><h3 id="t2">Search</h3><p id="p2">Semantic search engines.</p></div>
+    <div class="card"><h3 id="t3">Archive</h3><p id="p3">Historical text classification.</p></div>
+</div>
+
+<footer>
+    <p>&copy; 2026 Dicta Laboratory. All Rights Reserved.</p>
+</footer>
+
+<script>
+    function toggleLang() {
+        const title = document.getElementById('title');
+        const desc = document.getElementById('desc');
+        const btn = document.querySelector('.lang-toggle');
+        const isEn = document.body.dir === "ltr";
+
+        if (isEn) {
+            document.body.dir = "rtl";
+            title.innerText = "תשתית עיבוד שפה מתקדמת";
+            desc.innerText = "פיתוח כלים מובילים לעיבוד שפה טבעית עבור עברית ושפות שמיות.";
+            btn.innerText = "English";
+            document.getElementById('t1').innerText = "מורפולוגיה";
+            document.getElementById('t2').innerText = "חיפוש";
+            document.getElementById('t3').innerText = "ארכיון";
+        } else {
+            document.body.dir = "ltr";
+            title.innerText = "Advanced NLP Infrastructure";
+            desc.innerText = "Developing cutting-edge tools for Hebrew and Semitic language processing.";
+            btn.innerText = "עברית";
+            document.getElementById('t1').innerText = "Morphology";
+            document.getElementById('t2').innerText = "Search";
+            document.getElementById('t3').innerText = "Archive";
+        }
+    }
+</script>
+</body>
+</html>
